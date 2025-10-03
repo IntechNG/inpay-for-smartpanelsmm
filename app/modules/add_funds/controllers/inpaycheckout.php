@@ -13,6 +13,7 @@ class inpaycheckout extends MX_Controller
     public $public_key;
     public $secret_key;
     public $payment_fee;
+    public $currency_rate;
     public $payment_lib;
 
     public function __construct($payment = '')
@@ -25,7 +26,7 @@ class inpaycheckout extends MX_Controller
         $this->tb_payments = PAYMENTS_METHOD;
         $this->tb_payments_bonuses = PAYMENTS_BONUSES;
         $this->payment_type = 'inpaycheckout';
-        $this->currency_code = get_option('currency_code', 'USD');
+        $this->currency_code = strtoupper(get_option('currency_code', 'USD'));
         if ($this->currency_code === '') {
             $this->currency_code = 'USD';
         }
@@ -41,11 +42,17 @@ class inpaycheckout extends MX_Controller
             $this->public_key = get_value($option, 'public_key');
             $this->secret_key = get_value($option, 'secret_key');
             $this->payment_fee = (float) get_value($option, 'tnx_fee');
+            $this->currency_rate = (float) get_value($option, 'currency_rate', 1);
         } else {
             $this->payment_id = 0;
             $this->public_key = '';
             $this->secret_key = '';
             $this->payment_fee = 0;
+            $this->currency_rate = 1;
+        }
+
+        if ($this->currency_rate <= 0) {
+            $this->currency_rate = 1;
         }
 
         $this->load->library('inpaycheckoutapi');
@@ -75,13 +82,21 @@ class inpaycheckout extends MX_Controller
             _validation('error', lang('There_was_an_error_processing_your_request_Please_try_again_later'));
         }
 
-        if (strtoupper($this->currency_code) !== 'NGN') {
-            _validation('error', 'iNPAY Checkout requires the platform currency to be NGN. Please update your currency settings.');
-        }
-
         $unique = ids();
         $reference = 'inpay_' . strtotime(NOW) . '_' . substr(md5($unique), 0, 8);
-        $amount_kobo = (int) round($amount * 100);
+        $amount_ngn = $amount;
+        if ($this->currency_code !== 'NGN') {
+            if ($this->currency_rate <= 0 || $this->currency_rate == 1) {
+                _validation('error', 'Set the currency rate in iNPAY Checkout settings before using this gateway.');
+            }
+            $amount_ngn = round($amount * $this->currency_rate, 2);
+        }
+
+        if ($amount_ngn <= 0) {
+            _validation('error', lang('amount_must_be_greater_than_zero'));
+        }
+
+        $amount_kobo = (int) round($amount_ngn * 100);
         if ($amount_kobo <= 0) {
             _validation('error', lang('amount_must_be_greater_than_zero'));
         }
@@ -110,6 +125,10 @@ class inpaycheckout extends MX_Controller
             'reference' => $reference,
             'gateway' => 'smartpanel',
             'callback_url' => cn('add_funds/inpaycheckout/verify'),
+            'currency_rate' => $this->currency_rate,
+            'base_currency' => $this->currency_code,
+            'base_amount' => $amount,
+            'charged_amount_ngn' => $amount_ngn,
         ];
 
         $response = [
@@ -118,6 +137,7 @@ class inpaycheckout extends MX_Controller
             'checkout' => [
                 'public_key' => $this->public_key,
                 'amount_kobo' => $amount_kobo,
+                'amount_ngn' => $amount_ngn,
                 'email' => $user['email'],
                 'first_name' => $user['first_name'],
                 'last_name' => $user['last_name'],
@@ -125,6 +145,8 @@ class inpaycheckout extends MX_Controller
                 'metadata' => $metadata,
                 'verify_url' => cn('add_funds/inpaycheckout/verify'),
                 'transaction_id' => $transaction_id,
+                'currency_rate' => $this->currency_rate,
+                'base_currency' => $this->currency_code,
             ],
         ];
 
@@ -154,6 +176,10 @@ class inpaycheckout extends MX_Controller
 
         if (!$transaction) {
             _validation('error', 'Transaction not found.');
+        }
+
+        if (is_array($transaction)) {
+            $transaction = (object) $transaction;
         }
 
         if ($transaction->status == 1) {
@@ -232,6 +258,9 @@ class inpaycheckout extends MX_Controller
         ], '', '', true);
 
         if ($tx) {
+            if (is_array($tx)) {
+                $tx = (object) $tx;
+            }
             if ($tx->status != 1) {
                 $verify = $this->payment_lib->verify_transaction($reference);
                 if ($verify && !empty($verify['success']) && !empty($verify['data'])) {
@@ -251,7 +280,15 @@ class inpaycheckout extends MX_Controller
 
     protected function complete_transaction($transaction)
     {
-        if (!$transaction || $transaction->status == 1) {
+        if (!$transaction) {
+            return true;
+        }
+
+        if (is_array($transaction)) {
+            $transaction = (object) $transaction;
+        }
+
+        if ($transaction->status == 1) {
             return true;
         }
 

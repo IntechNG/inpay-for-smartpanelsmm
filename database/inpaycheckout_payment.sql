@@ -7,7 +7,7 @@ VALUES (
   0.00,
   1,
   0,
-  '{"type":"inpaycheckout","name":"iNPAY Checkout","min":1,"max":0,"new_users":1,"status":0,"option":{"public_key":"","secret_key":"","tnx_fee":"0"}}'
+  '{"type":"inpaycheckout","name":"iNPAY Checkout","min":1,"max":0,"new_users":1,"status":0,"option":{"public_key":"","secret_key":"","tnx_fee":"0","currency_rate":"1"}}'
 )
 ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`),

@@ -4,8 +4,12 @@
   $max_amount       = get_value($payment_params, 'max');
   $type             = get_value($payment_params, 'type');
   $tnx_fee          = get_value($option, 'tnx_fee');
-  $currency_code    = get_option('currency_code', 'USD');
+  $currency_code    = strtoupper(get_option('currency_code', 'USD'));
   $currency_symbol  = get_option('currency_symbol', '$');
+  $currency_rate    = (float) get_value($option, 'currency_rate', 1);
+  if ($currency_rate <= 0) {
+    $currency_rate = 1;
+  }
 ?>
 
 <div class="add-funds-form-content">
@@ -31,6 +35,11 @@
             <li><?=lang("Minimal_payment")?>: <strong><?php echo $currency_symbol.$min_amount; ?></strong></li>
             <?php if ($max_amount > 0) { ?>
             <li><?=lang("Maximal_payment")?>: <strong><?php echo $currency_symbol.$max_amount; ?></strong></li>
+            <?php } ?>
+            <?php if ($currency_code !== 'NGN') { ?>
+            <li>Payments are processed in NGN. Current rate: <strong>1 <?php echo $currency_code; ?> ≈ <?php echo number_format($currency_rate, 4); ?> NGN</strong>.</li>
+            <?php } else { ?>
+            <li>Payments are processed in NGN. Ensure your currency settings use the ₦ symbol.</li>
             <?php } ?>
             <li><?=lang("clicking_return_to_shop_merchant_after_payment_successfully_completed"); ?></li>
           </ul>
@@ -97,26 +106,29 @@
   function verifyPayment(checkout, reference, transactionId) {
     var payload = {
       reference: reference,
-      transaction_id: transactionId,
-      token: typeof token !== 'undefined' ? token : ''
+      transaction_id: transactionId
     };
 
-    fetch(checkout.verify_url, {
+    if (typeof token !== 'undefined') {
+      payload.token = token;
+    }
+
+    $.ajax({
+      url: checkout.verify_url,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      data: payload,
+      dataType: 'json'
     })
-      .then(function(response) { return response.json(); })
-      .then(function(result) {
-        if (result.status === 'success' && result.redirect_url) {
-          window.location.href = result.redirect_url;
-          return;
-        }
-        handleError(result.message || 'Unable to confirm payment.');
-      })
-      .catch(function() {
-        handleError('Unable to reach verification endpoint.');
-      });
+    .done(function(result) {
+      if (result.status === 'success' && result.redirect_url) {
+        window.location.href = result.redirect_url;
+        return;
+      }
+      handleError(result.message || 'Unable to confirm payment.');
+    })
+    .fail(function() {
+      handleError('Unable to reach verification endpoint.');
+    });
   }
 
   form.addEventListener('submit', function(event) {
