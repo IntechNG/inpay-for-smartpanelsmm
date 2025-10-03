@@ -121,3 +121,6 @@ Out of the box, SmartPanel’s currency selector doesn’t list the Nigerian nai
 - SmartPanel vendor support: contact your script provider.
 
 Issues and improvements welcome via pull request.
+
+### Release Notes
+- 2025-10-03: Verified live payment flow and webhook delivery against production iNPAY (ref `inpay_1759477843_3f923f41`). Update controller cast fixes array/object issues and confirm CSRF/webhook adjustments.
