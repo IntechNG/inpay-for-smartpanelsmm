@@ -39,7 +39,7 @@
             <?php if ($currency_code !== 'NGN') { ?>
             <li>Payments are processed in NGN. Current rate: <strong>1 <?php echo $currency_code; ?> ≈ <?php echo number_format($currency_rate, 4); ?> NGN</strong>.</li>
             <?php } else { ?>
-              <li>Do not reload or refresh the page after making payment or bank transfer, you will be automatically redirected once your payment have been confirmed.</li>
+             <li>Do not reload or refresh the page after making payment or bank transfer, you will be automatically redirected once your payment have been confirmed.</li>
             <?php } ?>
           </ul>
         </div>
