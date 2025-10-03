@@ -31,17 +31,20 @@ Copy these files into the matching paths within your SmartPanel installation.
 ## Installation Steps
 
 1. **Backup first.** Snapshot your SmartPanel files and database before changes.
+
 2. **Copy files.** Place each file from this repository into the corresponding directory in your SmartPanel root:
    - `app/modules/add_funds/controllers/inpaycheckout.php`
    - `app/modules/add_funds/libraries/inpaycheckoutapi.php`
    - `app/modules/add_funds/views/inpaycheckout/index.php`
    - `app/modules/admin/views/payments/integrations/inpaycheckout.php`
    - `assets/images/payments/inpaycheckout.svg`
+
 3. **Add the webhook route.** Edit `app/config/routes.php` and append:
    ```php
    $route['inpaycheckout/webhook'] = 'add_funds/inpaycheckout/webhook';
    ```
    This publishes a public webhook endpoint at `https://your-domain.com/inpaycheckout/webhook`.
+
 4. **Insert the payment method record.** If SmartPanel doesn’t already have an `inpaycheckout` method, insert one (see optional helper below):
    ```sql
    INSERT INTO `payments` (`type`, `name`, `sort`, `min`, `max`, `new_users`, `status`, `params`)
@@ -58,6 +61,7 @@ Copy these files into the matching paths within your SmartPanel installation.
    ```
    Adjust limits and defaults to suit your environment.
    - **Non-technical option:** import `database/inpaycheckout_payment.sql` (included in this repo) through phpMyAdmin → *Import*. It creates the same record automatically.
+   
 5. **Clear caches** (if OPCache/Cloudflare/etc.) so new files load.
 
 ## Configuration Inside SmartPanel
