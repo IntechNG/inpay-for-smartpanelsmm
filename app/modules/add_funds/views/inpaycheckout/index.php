@@ -4,8 +4,12 @@
   $max_amount       = get_value($payment_params, 'max');
   $type             = get_value($payment_params, 'type');
   $tnx_fee          = get_value($option, 'tnx_fee');
-  $currency_code    = get_option('currency_code', 'USD');
+  $currency_code    = strtoupper(get_option('currency_code', 'USD'));
   $currency_symbol  = get_option('currency_symbol', '$');
+  $currency_rate    = (float) get_value($option, 'currency_rate', 1);
+  if ($currency_rate <= 0) {
+    $currency_rate = 1;
+  }
 ?>
 
 <div class="add-funds-form-content">
@@ -31,6 +35,11 @@
             <li><?=lang("Minimal_payment")?>: <strong><?php echo $currency_symbol.$min_amount; ?></strong></li>
             <?php if ($max_amount > 0) { ?>
             <li><?=lang("Maximal_payment")?>: <strong><?php echo $currency_symbol.$max_amount; ?></strong></li>
+            <?php } ?>
+            <?php if ($currency_code !== 'NGN') { ?>
+            <li>Payments are processed in NGN. Current rate: <strong>1 <?php echo $currency_code; ?> ≈ <?php echo number_format($currency_rate, 4); ?> NGN</strong>.</li>
+            <?php } else { ?>
+            <li>Payments are processed in NGN. Ensure your currency settings use the ₦ symbol.</li>
             <?php } ?>
             <li><?=lang("clicking_return_to_shop_merchant_after_payment_successfully_completed"); ?></li>
           </ul>

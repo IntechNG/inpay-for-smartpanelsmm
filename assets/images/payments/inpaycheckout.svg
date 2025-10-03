@@ -1,27 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW 2021 (64-Bit) -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="0.737205in" height="0.584339in" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 43.02 34.1"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
- <defs>
-  <style type="text/css">
-   <![CDATA[
-    .fil1 {fill:#0F1219;fill-rule:nonzero}
-    .fil0 {fill:url(#id0)}
-   ]]>
-  </style>
-  <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="6.72" y1="18.41" x2="27.17" y2="-0">
-   <stop offset="0" style="stop-opacity:1; stop-color:#3A86FF"/>
-   <stop offset="1" style="stop-opacity:1; stop-color:#73C2FF"/>
-  </linearGradient>
- </defs>
- <g id="Layer_x0020_1">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <g id="_1857364130560">
-   <path class="fil0" d="M16.23 0l16.85 0c2.05,0 2.76,1.68 1.57,3.73l-8.69 15.01 -5.5 -11.48 -4.69 0 -9.88 17.06 -3.75 0c-2.05,0 -2.76,-1.68 -1.57,-3.73l9.76 -16.85c1.19,-2.05 3.84,-3.73 5.9,-3.73z"/>
-   <path class="fil1" d="M26.79 34.1l-16.85 0c-2.05,0 -2.76,-1.68 -1.57,-3.73l8.69 -15.01 5.5 11.48 4.69 0 9.88 -17.06 3.75 0c2.05,0 2.76,1.68 1.57,3.73l-9.76 16.85c-1.19,2.05 -3.84,3.73 -5.9,3.73z"/>
-  </g>
- </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 48">
+  <rect width="180" height="48" rx="8" fill="#1f2933"/>
+  <text x="16" y="30" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">iNPAY</text>
+  <text x="90" y="30" fill="#38bdf8" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">Checkout</text>
 </svg>
