@@ -58,7 +58,15 @@ Out of the box, SmartPanel’s currency selector doesn’t list the Nigerian nai
    ```
    This publishes a public webhook endpoint at `https://your-domain.com/inpaycheckout/webhook`.
 
-4. **Insert the payment method record.** If SmartPanel doesn’t already have an `inpaycheckout` method, insert one (see optional helper below). Update the placeholder currency rate (`"currency_rate":"1"`) if your base currency isn’t NGN:
+4. **Allow the webhook to bypass CSRF protection.** SmartPanel blocks POST requests without its CSRF token. In `app/config/config.php`, just below the existing `if (stripos(...))` rules, add:
+   ```php
+   if (stripos($_SERVER["REQUEST_URI"], 'inpaycheckout/webhook') !== false) {
+       $config['csrf_protection'] = false;
+   }
+   ```
+   This keeps protection enabled elsewhere while letting iNPAY's webhook through.
+
+5. **Insert the payment method record.** If SmartPanel doesn’t already have an `inpaycheckout` method, insert one (see optional helper below). Update the placeholder currency rate (`"currency_rate":"1"`) if your base currency isn’t NGN:
    ```sql
    INSERT INTO `payments` (`type`, `name`, `sort`, `min`, `max`, `new_users`, `status`, `params`)
    VALUES (
@@ -75,7 +83,7 @@ Out of the box, SmartPanel’s currency selector doesn’t list the Nigerian nai
    Adjust limits and defaults to suit your environment.
    - **Non-technical option:** import `database/inpaycheckout_payment.sql` (included in this repo) through phpMyAdmin → *Import*. After importing, edit the payment in SmartPanel admin to enter the correct currency rate and API keys.
    
-5. **Clear caches** (if OPCache/Cloudflare/etc.) so new files load.
+6. **Clear caches** (if OPCache/Cloudflare/etc.) so new files load.
 
 ## Configuration Inside SmartPanel
 

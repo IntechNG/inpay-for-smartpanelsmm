@@ -106,26 +106,29 @@
   function verifyPayment(checkout, reference, transactionId) {
     var payload = {
       reference: reference,
-      transaction_id: transactionId,
-      token: typeof token !== 'undefined' ? token : ''
+      transaction_id: transactionId
     };
 
-    fetch(checkout.verify_url, {
+    if (typeof token !== 'undefined') {
+      payload.token = token;
+    }
+
+    $.ajax({
+      url: checkout.verify_url,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      data: payload,
+      dataType: 'json'
     })
-      .then(function(response) { return response.json(); })
-      .then(function(result) {
-        if (result.status === 'success' && result.redirect_url) {
-          window.location.href = result.redirect_url;
-          return;
-        }
-        handleError(result.message || 'Unable to confirm payment.');
-      })
-      .catch(function() {
-        handleError('Unable to reach verification endpoint.');
-      });
+    .done(function(result) {
+      if (result.status === 'success' && result.redirect_url) {
+        window.location.href = result.redirect_url;
+        return;
+      }
+      handleError(result.message || 'Unable to confirm payment.');
+    })
+    .fail(function() {
+      handleError('Unable to reach verification endpoint.');
+    });
   }
 
   form.addEventListener('submit', function(event) {
