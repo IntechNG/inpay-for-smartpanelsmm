@@ -178,6 +178,10 @@ class inpaycheckout extends MX_Controller
             _validation('error', 'Transaction not found.');
         }
 
+        if (is_array($transaction)) {
+            $transaction = (object) $transaction;
+        }
+
         if ($transaction->status == 1) {
             ms(['status' => 'success', 'redirect_url' => cn('add_funds/success')]);
         }
@@ -254,6 +258,9 @@ class inpaycheckout extends MX_Controller
         ], '', '', true);
 
         if ($tx) {
+            if (is_array($tx)) {
+                $tx = (object) $tx;
+            }
             if ($tx->status != 1) {
                 $verify = $this->payment_lib->verify_transaction($reference);
                 if ($verify && !empty($verify['success']) && !empty($verify['data'])) {
@@ -273,7 +280,15 @@ class inpaycheckout extends MX_Controller
 
     protected function complete_transaction($transaction)
     {
-        if (!$transaction || $transaction->status == 1) {
+        if (!$transaction) {
+            return true;
+        }
+
+        if (is_array($transaction)) {
+            $transaction = (object) $transaction;
+        }
+
+        if ($transaction->status == 1) {
             return true;
         }
 
