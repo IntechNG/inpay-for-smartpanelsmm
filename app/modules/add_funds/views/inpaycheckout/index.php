@@ -17,7 +17,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="for-group text-center">
-          <img src="<?=BASE?>/assets/images/payments/inpaycheckout.svg" alt="iNPAY Checkout icon">
+          <img src="<?=BASE?>/assets/images/payments/inpaycheckout.png" alt="iNPAY Checkout icon">
           <p class="p-t-10"><small><?=sprintf(lang("you_can_deposit_funds_with_paypal_they_will_be_automaticly_added_into_your_account"), 'iNPAY Checkout')?></small></p>
         </div>
 
@@ -39,9 +39,8 @@
             <?php if ($currency_code !== 'NGN') { ?>
             <li>Payments are processed in NGN. Current rate: <strong>1 <?php echo $currency_code; ?> ≈ <?php echo number_format($currency_rate, 4); ?> NGN</strong>.</li>
             <?php } else { ?>
-            <li>Payments are processed in NGN. Ensure your currency settings use the ₦ symbol.</li>
+              <li>Do not reload or refresh the page after making payment or bank transfer, you will be automatically redirected once your payment have been confirmed.</li>
             <?php } ?>
-            <li><?=lang("clicking_return_to_shop_merchant_after_payment_successfully_completed"); ?></li>
           </ul>
         </div>
 
